@@ -1,8 +1,12 @@
 const fs = require('fs')
 // ================= START BOT CODE ===================
-const { Client } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 
-const client = new Client({intents: []});
+const client = new Client({intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,   
+]});
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'))
 
