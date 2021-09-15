@@ -5,8 +5,9 @@ module.exports = {
     async execute(msg) {
         if (msg.author.bot || !msg.content.startsWith('c?')) return
 
-        const [commandName, ...args] = msg.content.substring(2).split(' ')
-        const command = commands.get(commandName)
+        const [commandName, ...args] = msg.content.slice(2).trim().split(/ +/)
+
+        const command = commands.get(commandName.toLowerCase())
         if (!command) return
 
         try {
@@ -18,6 +19,5 @@ module.exports = {
                 ephemeral: true,
             })
         }
-        
     }
 }
