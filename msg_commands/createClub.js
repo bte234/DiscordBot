@@ -9,6 +9,10 @@ module.exports = {
     `,
     
     async execute(msg, ...args) {
+        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+            return
+        }
+
         const clubName = args.join('-')
         if (!clubName) {
             msg.channel.send(this.description)

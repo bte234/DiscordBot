@@ -1,3 +1,5 @@
+const { Permissions } = require('discord.js');
+
 const getIDFromPing = input => {
     if (!input) return
 
@@ -24,6 +26,10 @@ module.exports = {
     `,
 
     async execute(msg, ...args) {
+        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+            return
+        }
+
         if (!args?.length) {
             msg.channel.send(this.description)
             return
