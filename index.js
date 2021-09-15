@@ -1,25 +1,18 @@
 const fs = require('fs')
 // ================= START BOT CODE ===================
-const {Client, Collection, Intents} = require('discord.js');
+const { Client } = require('discord.js');
 
-const intents = new Intents(268437552)
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-  ]
-});
+const client = new Client({intents: []});
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'))
 
 for (const file of eventFiles) {
-  const event = require(`./events/${file}`)
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args))
-  } else {
-    client.on(event.name, (...args) => event.execute(...args))
-  }
+    const event = require(`./events/${file}`)
+    if (event.once) {
+        client.once(event.name, (...args) => event.execute(...args))
+    } else {
+        client.on(event.name, (...args) => event.execute(...args))
+    }
 }
 
 // You really don't want your token here since your repl's code
