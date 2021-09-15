@@ -49,7 +49,7 @@ module.exports = {
             return
         }
 
-        const presRole = await msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
+        const presRole = msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
         if (!presRole) {
             msg.channel.send(`Found no club with name ${clubName}`)
             return
