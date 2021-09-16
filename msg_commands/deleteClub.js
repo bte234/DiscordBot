@@ -27,9 +27,12 @@ module.exports = {
             }
 
             const presRole = msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
-            channel.delete()
-            presRole.delete()
+            const promiseChannelDel = channel?.delete()
+            const promiseRoleDel = presRole?.delete()
 
+            if (!promiseChannelDel || !promiseRoleDel) {
+                /* If one of the operations didn't work, the club|role might not have been deleted... should we test if they exist, or assume that it failed cause they are already deleted? Also should we store it somewhere, as logs, to see how frequent it is? */
+            }
             msg.channel.send(`Deleted club ${clubName}`)
         } catch (err) {
             console.error(err)

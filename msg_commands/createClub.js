@@ -13,18 +13,33 @@ module.exports = {
             return
         }
 
-        const clubName = args.join('-')
+        // To avoid the input 'club--name' for example (Discord creates it as 'club-name')
+        // This way you can't create the same club, as 'club-name' and 'club--name'
+        const clubName = args.join('-').split('-')?.filter(e => e !== '').join('-')
+
         if (!clubName) {
             msg.channel.send(this.description)
             return
         }
-        
+
+        // Check if the channel exists
+        const channels = msg.guild.channels.cache
+
+        const textChannels = channels.filter(channel => channel.type === "GUILD_TEXT")
+            .map(channel => channel.name)
+
+        if (textChannels.indexOf(clubName) !== -1) {
+          msg.channel.send('There\'s already a club with that name')
+
+          return
+        }
+
         const presRole = await msg.guild.roles.create({
             name: `${clubName}-president`,
         }).catch(err => {
-            msg.channel.send('Club with specified name is already created')
-            console.log(err)
-            return
+          msg.channel.send('Club with specified name is already created')
+          console.log(err)
+          return
         })
         
         const channel = await msg.guild.channels.create(clubName, {
