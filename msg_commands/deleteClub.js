@@ -1,4 +1,5 @@
 const { Permissions } = require('discord.js');
+const { formatClubName } = require('../helpers')
 
 module.exports = {
     name: 'delete',
