@@ -14,7 +14,8 @@ module.exports = {
                 return
             }
 
-            const clubName = args.join('-')
+            const clubName = formatClubName(args)
+
             if (!clubName) {
                 msg.channel.send(this.description)
                 return

@@ -16,10 +16,15 @@ module.exports = {
             return
         }
 
-        const clubChannel = msg.guild.channels.cache.find(channel => channel.name===clubName)
+        const clubChannel = msg.guild.channels.cache.find(channel => channel.name === clubName)
 
         if (!clubChannel) {
             msg.channel.send(`Cannot find any club with name ${clubName}`)
+            return
+        }
+
+        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) && !clubName.endsWith('club')) {
+            msg.channel.send(`You have no permissions to leave a channel that is not a club!`)
             return
         }
 
