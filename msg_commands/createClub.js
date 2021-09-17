@@ -15,7 +15,6 @@ module.exports = {
         }
 
         const clubName = formatClubName(args)
-        console.log(clubName)
 
         if (!clubName) {
             msg.channel.send(this.description)
