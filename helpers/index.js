@@ -39,7 +39,7 @@ module.exports.formatClubName = clubName => {
 module.exports.handleError = async error => {
     const fs = require("fs");
 
-    const date = new Date().toISOString() // toISOString() apparently has issues with timezone, but that's irrelevant
+    const date = new Date().toISOString() // toISOString() apparently has issues with timezone, but that's irrelevant since it's server side storage
     const path = `logs/errors/${date.substring(0, 7)}`
 
     if (! await createStructure(fs, path)) {

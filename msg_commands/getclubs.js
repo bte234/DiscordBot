@@ -12,7 +12,7 @@ module.exports = {
         }
 
         const allowed = 5 // Default items it shows (set as 5 so we can see pagination without needing to add too many clubs)
-        const [inputPage, ...inputSearch] = [parseInt(args[args.length - 1]) ? parseInt(args ?.pop()) : 1, ...args]
+        const [inputPage, ...inputSearch] = [/^\d+$/.test(args[args.length - 1]) ? parseInt(args?.pop()) : 1, ...args]
 
         const search = inputSearch ?.length > 0 ? inputSearch.join('-') : ''
 
