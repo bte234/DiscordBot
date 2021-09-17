@@ -17,7 +17,7 @@ module.exports.getIDFromPing = input => {
 
 // Expects an array of args, and returns the club name, removing extra hyphens, and adding club at the end, if not already
 module.exports.formatClubName = clubName => {
-    if (!clubName) return
+    if (!clubName?.length) return false
 
     // To avoid the input 'club--name' for example (Discord creates it as 'club-name')
     // This way you can't create the same club, as 'club-name' and 'club--name'
