@@ -34,7 +34,8 @@ module.exports = {
         }
 
         // If the category 'clubs' does not exist, we create it
-        const textCategories = channels.filter(channel => channel.type === "GUILD_CATEGORY" && channel.deleted === false)
+        const textCategories = channels
+            .filter(channel => channel.type === "GUILD_CATEGORY" && channel.deleted === false)
             .map(channel => channel.name)
 
         if (textCategories.map(item => item.toLowerCase()).indexOf('clubs') === -1) {
@@ -47,8 +48,11 @@ module.exports = {
             })
         }
 
-        const clubCategoryId = channels.filter(channel => channel.type === "GUILD_CATEGORY" && channel.name.toLowerCase() === 'clubs').map(channel => channel.id)[0]
+        const clubCategoryId = channels
+            .filter(channel => channel.type === "GUILD_CATEGORY" && channel.name.toLowerCase() === 'clubs')
+            .map(channel => channel.id)[0]
                 
+        // create the club channel and president role
         const presRole = await msg.guild.roles.create({
             name: `${clubName}-president`,
         }).catch(err => {

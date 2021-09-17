@@ -20,7 +20,6 @@ module.exports = {
         }
 
         const [userInput, ...rest] = args
-        // const clubName = rest.join('-')
         const clubName = formatClubName(rest)
         const userID = getIDFromPing(userInput)
 
