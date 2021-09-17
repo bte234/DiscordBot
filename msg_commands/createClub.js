@@ -53,9 +53,9 @@ module.exports = {
         const presRole = await msg.guild.roles.create({
             name: `${clubName}-president`,
         }).catch(err => {
-          msg.channel.send('Club with specified name is already created')
-          console.log(err)
-          return
+            msg.channel.send('Club with specified name is already created')
+            console.log(err)
+            return
         })
         
         const channel = await msg.guild.channels.create(clubName, {

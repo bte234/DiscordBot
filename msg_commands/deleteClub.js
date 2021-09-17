@@ -22,7 +22,7 @@ module.exports = {
                 return
             }
 
-            const channel = msg.guild.channels.cache.find(r => r.name === clubName)
+            const channel = msg.guild.channels.cache.find(c => c.name === clubName)
 
             const presRole = msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
             const promises = [channel?.delete(), presRole?.delete()]

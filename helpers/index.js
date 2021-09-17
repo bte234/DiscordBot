@@ -19,6 +19,9 @@ module.exports.getIDFromPing = input => {
 module.exports.formatClubName = clubName => {
     // To avoid the input 'club--name' for example (Discord creates it as 'club-name')
     // This way you can't create the same club, as 'club-name' and 'club--name'
+
+    const endName = 'club'; // Termination of the clubName (lowercase)
+
     const newName = clubName
         .join('-')
         .replace(/[^A-Za-z\-\s]/g, '')
@@ -27,8 +30,8 @@ module.exports.formatClubName = clubName => {
     if (!newName?.length) return false
     
     return (
-        (newName[newName.length - 1].toLowerCase() !== 'club') 
-        ? [...newName, 'club'] 
-        : newName)
-        .join('-').toLowerCase()
+        (newName[newName.length - 1].toLowerCase() !== endName) 
+        ? [...newName, endName] 
+        : newName
+        ).join('-').toLowerCase()
 }
