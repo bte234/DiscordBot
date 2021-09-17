@@ -24,12 +24,6 @@ module.exports = {
             return
         }
 
-        if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) && !clubName.endsWith('club')) {
-            msg.channel.send(`You have no permissions to leave a channel that is not a club!`)
-            return
-        }
-
-        // TODO: issue with channel that is not club
         clubChannel.permissionOverwrites.edit(msg.member.id, {
             VIEW_CHANNEL: false,
         })
