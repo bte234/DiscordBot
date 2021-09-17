@@ -23,34 +23,31 @@ module.exports = {
 
         // Check if the channel exists
         const channels = msg.guild.channels.cache
+        
+        const clubChannel = channels.find(c => c.type === 'GUILD_TEXT' && c.name === clubName)
 
-        const textChannels = channels.filter(channel => channel.type === "GUILD_TEXT" && channel.deleted === false)
-            .map(channel => channel.name)
-
-        if (textChannels.indexOf(clubName) !== -1) {
-          msg.channel.send('There\'s already a club with that name')
-
-          return
+        const clubRole = msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
+        if (clubChannel || clubRole) {
+            msg.channel.send('There\'s already a club with that name')
+            return
         }
 
         // If the category 'clubs' does not exist, we create it
-        const textCategories = channels
-            .filter(channel => channel.type === "GUILD_CATEGORY" && channel.deleted === false)
-            .map(channel => channel.name)
+        const textCategory = channels.find(c => c.type === 'GUILD_CATEGORY' && c.name.toLowerCase() === 'clubs')
+        
+        let categoryID = textCategory?.id
 
-        if (textCategories.map(item => item.toLowerCase()).indexOf('clubs') === -1) {
-            await msg.guild.channels.create('clubs', {
+        if (!textCategory) {
+            const category = await msg.guild.channels.create('clubs', {
                 type: 'GUILD_CATEGORY',
                 permissionOverwrites: [
                     {id: msg.guild.id, deny: ['VIEW_CHANNEL']},
                     {id: msg.author.id, allow: ['VIEW_CHANNEL']},
                 ]
             })
-        }
 
-        const clubCategoryId = channels
-            .filter(channel => channel.type === "GUILD_CATEGORY" && channel.name.toLowerCase() === 'clubs')
-            .map(channel => channel.id)[0]
+            categoryID = category.id
+        }
                 
         // create the club channel and president role
         const presRole = await msg.guild.roles.create({
@@ -63,7 +60,7 @@ module.exports = {
         
         const channel = await msg.guild.channels.create(clubName, {
             type: 'GUILD_TEXT',
-            parent: clubCategoryId || null,
+            parent: categoryID || null,
             permissionOverwrites: [
                 {
                     id: msg.guild.id,
