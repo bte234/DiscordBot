@@ -22,12 +22,19 @@ module.exports = {
                 return
             }
 
+            const clubChannel = msg.guild.channels.cache.find(channel => channel.name === clubName)
+
+            if (!clubChannel) {
+                msg.channel.send(`Cannot find any club with name ${clubName}`)
+                return
+            }
+
             const channel = msg.guild.channels.cache.find(r => r.name === clubName)
 
             const presRole = msg.guild.roles.cache.find(r => r.name === `${clubName}-president`)
             const promises = [channel?.delete(), presRole?.delete()]
 
-            if (promises.indexOf(null) !== -1) {
+            if (promises.includes(undefined, null)) {
                 msg.channel.send(`An error has occurred when trying to delete the club`)
                 return
             }

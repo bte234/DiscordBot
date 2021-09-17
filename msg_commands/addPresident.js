@@ -39,7 +39,7 @@ module.exports = {
             return
         }
 
-        // remove current president
+        // Remove current president
         presRole.members.forEach(member => {
             member.roles.remove(presRole.id)
         })

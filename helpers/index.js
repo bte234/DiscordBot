@@ -17,13 +17,16 @@ module.exports.getIDFromPing = input => {
 
 // Expects an array of args, and returns the club name, removing extra hyphens, and adding club at the end, if not already
 module.exports.formatClubName = clubName => {
-    if (!clubName?.length) return false
-
     // To avoid the input 'club--name' for example (Discord creates it as 'club-name')
     // This way you can't create the same club, as 'club-name' and 'club--name'
     const newName = clubName.join('-').split('-')?.filter(e => e !== '')
+    if (!newName?.length) return false
     
-    return (
-        (newName[newName.length - 1].toLowerCase() !== 'club') ? [...newName, 'club'] : newName
-    ).join('-').toLowerCase()
+    const rawResponse = (
+        (newName[newName.length - 1].toLowerCase() !== 'club') 
+        ? [...newName, 'club'] 
+        : newName).join('-').toLowerCase()
+
+    return rawResponse.replace(/[^A-Za-z\-\s]/g, '')
+        
 }
