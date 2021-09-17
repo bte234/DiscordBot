@@ -52,8 +52,11 @@ module.exports = {
         setTimeout(() => {
             channel.permissionOverwrites.edit(user.id, {
                 SEND_MESSAGES: true,
+            }).then(()=> {
+                msg.channel.send(`User ${user.displayName} is now unmuted from ${clubName}`)
+            }).catch(err => {
+                return
             })
-            msg.channel.send(`User ${user.displayName} is now unmuted from ${clubName}`)
         }, ms(dur))
 
         msg.channel.send(`User ${user.displayName} is now muted from ${clubName} for ${dur}`)
