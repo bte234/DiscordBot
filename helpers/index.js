@@ -24,7 +24,7 @@ module.exports.formatClubName = clubName => {
 
     const newName = clubName
         .join('-')
-        .replace(/[^A-Za-z\-\s]/g, '')
+        .replace(/[^A-Za-z0-9\-\s]/g, '')
         .split('-')
         ?.filter(e => e !== '')
     if (!newName?.length) return false
