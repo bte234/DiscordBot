@@ -51,13 +51,9 @@ module.exports.handleError = async error => {
 
     fs.writeFile(filename, `${JSON.stringify({ ...error, date })},\n`, { flag: 'a' }, function(err) {
         if (err) console.log(err)
-        
     });
 }
 
-const createStructure = async (fs, path) => {
-    await fs.promises.mkdir(path, { recursive: true }, (err) => {
-        return false
-    });
-    return true
-}
+const createStructure = (fs, path) => fs.promises.mkdir(path, { recursive: true }, (err) => {
+    if (err) console.log(err)
+})
