@@ -1,4 +1,5 @@
 const { Permissions } = require('discord.js');
+const { formatClubName } = require('../helpers')
 
 module.exports = {
     name: 'leave',
@@ -10,7 +11,7 @@ module.exports = {
     
     
     async execute(msg, ...args) {
-        const clubName = args.join('-')
+        const clubName = formatClubName(args)
         if (!clubName) {
             msg.channel.send(this.description)
             return

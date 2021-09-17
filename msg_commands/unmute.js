@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { getIDFromPing } = require('../helpers')
+const { getIDFromPing, formatClubName } = require('../helpers')
 
 module.exports = {
     name: 'unmute',
@@ -16,7 +16,7 @@ module.exports = {
         }
 
         const [userInput, ...rest] = args
-        const clubName = rest.join('-')
+        const clubName = formatClubName(rest)
         const userID = getIDFromPing(userInput)
 
         const user = await msg.guild.members.fetch(userID).catch(err => {
