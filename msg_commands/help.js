@@ -18,7 +18,7 @@ module.exports = {
         const command = commands.get(input)
         if (!command) {
             // no arguments, listing commands
-            const commandList = [...commands.keys()]
+            const commandList = [...commands.keys()].sort()
             let message = `\`\`\`List of available commands:`
             for (const commandName of commandList) {
                 message = `${message}\nc?${commandName}`
