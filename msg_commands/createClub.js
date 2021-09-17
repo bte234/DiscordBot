@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { formatClubName } = require('../helpers')
+const { formatClubName, handleError } = require('../helpers')
 
 module.exports = {
     name: 'create',
@@ -73,7 +73,8 @@ module.exports = {
             ]
         }).catch(err => {
             msg.channel.send('Failed to create club')
-            console.log(err)
+            handleError({errno: 1, message: 'Attempt to create club failed.', args: `c?create ${args}`})
+
             return
         })
 

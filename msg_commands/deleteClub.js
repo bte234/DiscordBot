@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { formatClubName } = require('../helpers')
+const { formatClubName, handleError } = require('../helpers')
 
 module.exports = {
     name: 'delete',
@@ -34,9 +34,12 @@ module.exports = {
 
             await Promise.all(promises);
             msg.channel.send(`Deleted club ${clubName}`)
+
         } catch (err) {
-            console.error(err)
             msg.channel.send('An error has occurred when trying to delete the club')
+            handleError({errno: 2, message: 'Attempt to delete club failed.', args: `c?delete ${args}`})
+
+            return
         }
     }
 }

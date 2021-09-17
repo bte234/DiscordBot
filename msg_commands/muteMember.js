@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { getIDFromPing, formatClubName } = require('../helpers')
+const { getIDFromPing, formatClubName, handleError } = require('../helpers')
 
 module.exports = {
     name: 'mute',

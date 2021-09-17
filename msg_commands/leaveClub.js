@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { formatClubName } = require('../helpers')
+const { formatClubName, handleError } = require('../helpers')
 
 module.exports = {
     name: 'leave',

@@ -4,12 +4,12 @@ module.exports.getIDFromPing = input => {
     // if input is ping, it would have format <@idgoeshere>
     // or <@!idgoeshere>
     if (input.startsWith('<@') && input.endsWith('>')) {
-		input = input.slice(2, -1);
-		if (input.startsWith('!')) {
-			input = input.slice(1);
-		}
-		return input
-	}
+        input = input.slice(2, -1);
+        if (input.startsWith('!')) {
+            input = input.slice(1);
+        }
+        return input
+    }
 
     // else, just assume that its already id
     return input
@@ -28,10 +28,36 @@ module.exports.formatClubName = clubName => {
         .split('-')
         ?.filter(e => e !== '')
     if (!newName?.length) return false
-    
+
     return (
-        (newName[newName.length - 1].toLowerCase() !== endName) 
-        ? [...newName, endName] 
-        : newName
-        ).join('-').toLowerCase()
+        (newName[newName.length - 1].toLowerCase() !== endName)
+            ? [...newName, endName]
+            : newName
+    ).join('-').toLowerCase()
+}
+
+module.exports.handleError = async error => {
+    const fs = require("fs");
+
+    const date = new Date().toISOString() // toISOString() apparently has issues with timezone, but that's irrelevant
+    const path = `logs/errors/${date.substring(0, 7)}`
+
+    if (! await createStructure(fs, path)) {
+        console.log('Error when creating the folder structure')
+        return
+    }
+
+    const filename = `${path}/${date.substring(8, 10)}_errors.txt`
+
+    fs.writeFile(filename, `${JSON.stringify({ ...error, date })},\n`, { flag: 'a' }, function(err) {
+        if (err) console.log(err)
+        
+    });
+}
+
+const createStructure = async (fs, path) => {
+    await fs.promises.mkdir(path, { recursive: true }, (err) => {
+        return false
+    });
+    return true
 }

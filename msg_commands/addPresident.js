@@ -1,5 +1,5 @@
 const { Permissions } = require('discord.js');
-const { getIDFromPing, formatClubName } = require('../helpers')
+const { getIDFromPing, formatClubName, handleError } = require('../helpers')
 
 module.exports = {
     name: 'president',
@@ -10,6 +10,7 @@ module.exports = {
     `,
 
     async execute(msg, ...args) {
+        
         if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             return
         }
