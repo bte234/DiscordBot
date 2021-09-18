@@ -1,6 +1,6 @@
 const { MessageEmbed, MessageActionRow, MessageButton, MessageCollector } = require('discord.js');
 
-const [color, allowed, title] = ['#ab00ff', 5, 'c?clubs'] // Allowed -> Default items it shows (change to smaller value to test pagination)
+const [color, allowed, title] = ['#ab00ff', 20, 'c?clubs'] // Allowed -> Default items it shows (change to smaller value to test pagination)
 let [search, page, totalPages] = ['', 1, 1]
 
 module.exports = {
@@ -41,19 +41,18 @@ module.exports = {
         totalPages = Math.ceil(clubChannels.length / allowed) || 1
         page = inputPage < 1 ? 1 : (inputPage > totalPages ? totalPages : inputPage)
 
-        paginate({ msg, clubChannels, page, actionButton: null, embeddedMessage: null, collectible: true })
+        const fields = paginate({ clubChannels, page })
+        setEmbed({ msg, fields, clubChannels, page, actionButton: null, embeddedMessage: null, collectible: true })
     }
 }
 
-// Generates the text for the current page, then calls setEmbed
-const paginate = ({msg, clubChannels, page, actionButton, embeddedMessage, collectible, ...rest}) => {
+// Returns an array with the fields for the current page
+const paginate = ({clubChannels, page, ...rest}) => {
     const [start, end] = [(page - 1) * allowed, page * allowed]
 
     const returnedChannels = clubChannels.slice(start, end)
 
-    let fields = [{ name: title, value: `List of available clubs${search ? ` for the search '${search}'` : ''}:\n\n${returnedChannels.map(c => `Club: ${c.name}. President: ${c.president || 'unset'}`).join('\n')}` }]
-
-    setEmbed({ msg, fields, clubChannels, page, actionButton, embeddedMessage, collectible })
+    return [{ name: title, value: `List of available clubs${search ? ` for the search '${search}'` : ''}:\n\n${returnedChannels.map(c => `Club: ${c.name}. President: ${c.president || 'unset'}`).join('\n')}` }]
 }
 
 // Creates / updates an embed message, plus its buttons, and collector sent by the bot
@@ -113,7 +112,8 @@ const setEmbed = async ({ msg, fields, clubChannels, page, actionButton, embedde
                         page++
                     }
 
-                    paginate({ msg, clubChannels, page, actionButton, embeddedMessage, collectible: true })
+                    const fields = paginate({clubChannels, page})
+                    setEmbed({ msg, fields, clubChannels, page, actionButton, embeddedMessage, collectible: true })
                 } else {
                     actionButton.reply({ content: `These buttons aren't for you!`, ephemeral: true })
                 }
