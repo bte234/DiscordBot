@@ -16,7 +16,9 @@ module.exports = {
             // msg.channel.send(this.description)
 
             let fields = { name: 'help', value: this.description }
-            setEmbed(msg, fields, null, null, 1)
+            page = 0
+
+            setEmbed({ msg, fields, clubChannels: null, page: 1, actionButton: null, embeddedMessage: null, collectible: false })
             return
         }
 
@@ -36,75 +38,96 @@ module.exports = {
                 }
             })
 
-        totalPages = Math.ceil(clubChannels.length / allowed)
+        totalPages = Math.ceil(clubChannels.length / allowed) || 1
         page = inputPage < 1 ? 1 : (inputPage > totalPages ? totalPages : inputPage)
 
-        paginate(msg, clubChannels, page)
+        paginate({ msg, clubChannels, page, actionButton: null, embeddedMessage: null, collectible: true })
     }
 }
 
-const paginate = (msg, clubChannels, page, sent = null) => {
+// Generates the text for the current page, then calls setEmbed
+const paginate = ({msg, clubChannels, page, actionButton, embeddedMessage, collectible, ...rest}) => {
     const [start, end] = [(page - 1) * allowed, page * allowed]
 
     const returnedChannels = clubChannels.slice(start, end)
 
     let fields = [{ name: title, value: `List of available clubs${search ? ` for the search '${search}'` : ''}:\n\n${returnedChannels.map(c => `Club: ${c.name}. President: ${c.president || 'unset'}`).join('\n')}` }]
 
-    setEmbed(msg, fields, clubChannels, page, sent)
+    setEmbed({ msg, fields, clubChannels, page, actionButton, embeddedMessage, collectible })
 }
 
-const setEmbed = async (msg, fields, clubChannels, page, sent = null) => {
+// Creates / updates an embed message, plus its buttons, and collector sent by the bot
+const setEmbed = async ({ msg, fields, clubChannels, page, actionButton, embeddedMessage, collectible, ...rest }) => {
+    const needsPagination = !!(totalPages > 1)
+
     const embed = new MessageEmbed()
         .setColor(color)
         // .setTitle(title)
-        .setAuthor('Cornflower', 'https://cdn.discordapp.com/avatars/887481802476912711/5d8acf6398f0cf79344e54533695105c.webp?size=256', 'https://discord.js.org')
+        // .setAuthor(`Cornflower`, 'https://cdn.discordapp.com/avatars/887481802476912711/5d8acf6398f0cf79344e54533695105c.webp?size=256', 'https://discord.js.org')
         .addFields(
             fields
         )
-        .setFooter(`Page ${page} of ${totalPages}`)
 
-    const components = new MessageActionRow()
-        .addComponents(
-            new MessageButton()
-                .setCustomId('TMK-left')
-                .setLabel('⬅')
-                .setStyle('SECONDARY')
-                .setDisabled(!(page > 1))
-        )
-        .addComponents(
-            new MessageButton()
-                .setCustomId('TMK-right')
-                .setLabel('➡')
-                .setStyle('SECONDARY')
-                .setDisabled(!(page < totalPages))
-            // .setEmoji('833087684691361803')
-        );
+    if (needsPagination)
+        embed.setFooter(`Page ${page} of ${totalPages}`)
+
+    const components = collectible && needsPagination ?
+        [new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('TMK-left')
+                    .setLabel('⬅')
+                    .setStyle('SECONDARY')
+                    .setDisabled(!(page > 1))
+            )
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('TMK-right')
+                    .setLabel('➡')
+                    .setStyle('SECONDARY')
+                    .setDisabled(!(page < totalPages))
+                // .setEmoji('833087684691361803')
+            )
+        ] : null
 
     // If it's null (first call), send message, otherwise we add an event to listen to the button actions
-    if (sent) {
-        sent.update({ embeds: [embed], components: [components], ephemeral: true })
+    if (actionButton) {
+        actionButton ?.update({ embeds: [embed], components })
+    } else if (embeddedMessage && rest.isLastInteraction) {
+        // If there was no action button clicked, and there is an embeddedMessage === collector died from timeout
+        embeddedMessage.edit({ embeds: [embed], components: [] })
     }
     else {
-        components ? msg.channel.send({ embeds: [embed], components: [components], ephemeral: true }) : msg.channel.send({ embeds: [embed], ephemeral: true })
+        const embeddedMessage = await msg.channel.send({ embeds: [embed], components })
+
         msg.react('✅');
 
-        const collector = msg.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 });
+        if (collectible && needsPagination) {
+            const collector = embeddedMessage.createMessageComponentCollector({ componentType: 'BUTTON', time: 30000 })
 
-        collector.on('collect', async i => {
-            // /*
-            if (i.user.id === msg.author.id) {
-                if (i.customId === 'TMK-left') {
-                    page--
-                } else if (i.customId === 'TMK-right') {
-                    page++
+            collector.on('collect', async actionButton => {
+                if (actionButton.user.id === msg.author.id) {
+                    if (actionButton.customId === 'TMK-left') {
+                        page--
+                    } else if (actionButton.customId === 'TMK-right') {
+                        page++
+                    }
+
+                    paginate({ msg, clubChannels, page, actionButton, embeddedMessage, collectible: true })
+                } else {
+                    actionButton.reply({ content: `These buttons aren't for you!`, ephemeral: true })
                 }
+            })
 
-                // i.update({ content: 'A button was clicked!', components: [components] }); // `${i.user.id} clicked on the ${i.customId} button.`
-                paginate(msg, clubChannels, page, i)
-            } else {
-                i.reply({ content: `These buttons aren't for you!`, ephemeral: true });
-            }
-            // */
-        });
+            collector.on('end', async collected => {
+                setEmbed({ msg, fields, clubChannels, page, actionButton: false, embeddedMessage, collectible: false, isLastInteraction: true })
+            })
+        }
     }
 }
+
+// Collector usage: 
+// 1) Create buttons
+// 2) Assign collector to buttons
+// 3) Whenever a button is pressed, we update the collector
+// When the collector time dies, remove the buttons that had a collector attached
