@@ -10,7 +10,6 @@ module.exports = {
     `,
 
     async execute(msg, ...args) {
-        
         if (!msg.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             return
         }

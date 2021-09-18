@@ -42,10 +42,7 @@ module.exports.handleError = async error => {
     const date = new Date().toISOString() // toISOString() apparently has issues with timezone, but that's irrelevant since it's server side storage
     const path = `logs/errors/${date.substring(0, 7)}`
 
-    if (! await createStructure(fs, path)) {
-        console.log('Error when creating the folder structure')
-        return
-    }
+    await createStructure(fs, path)
 
     const filename = `${path}/${date.substring(8, 10)}_errors.txt`
 
