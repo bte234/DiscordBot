@@ -1,6 +1,6 @@
 const { MessageEmbed, MessageActionRow, MessageButton, MessageCollector } = require('discord.js');
 
-const [color, allowed, title] = ['#b1b12a', 5, 'c?clubs'] // Allowed -> Default items it shows (change to smaller value to test pagination)
+const [color, allowed, title] = ['#ab00ff', 5, 'c?clubs'] // Allowed -> Default items it shows (change to smaller value to test pagination)
 let [search, page, totalPages] = ['', 1, 1]
 
 module.exports = {
@@ -76,14 +76,14 @@ const setEmbed = async ({ msg, fields, clubChannels, page, actionButton, embedde
             .addComponents(
                 new MessageButton()
                     .setCustomId('TMK-left')
-                    .setLabel('⬅')
+                    .setLabel('◀')
                     .setStyle('SECONDARY')
                     .setDisabled(!(page > 1))
             )
             .addComponents(
                 new MessageButton()
                     .setCustomId('TMK-right')
-                    .setLabel('➡')
+                    .setLabel('▶')
                     .setStyle('SECONDARY')
                     .setDisabled(!(page < totalPages))
                 // .setEmoji('833087684691361803')
